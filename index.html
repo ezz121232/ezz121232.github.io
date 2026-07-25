@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+let tunnelUrl = "https://next-node-ai.serveousercontent.com"; // رابط Cloudflare الدائم والسريع جداً
+let status = 1; // 2 للخطأ، 1 للتحويل التلقائي، 0 لرسالة التنبيه
+let isDebugPressed = false;
+
+window.addEventListener('keydown', function(event) {
+    if (event.key === '7') {
+        isDebugPressed = true;
+    }
+});
+
+setTimeout(function() {
+    if (isDebugPressed) {
+        document.write("<h1>Debug Menu</h1><p>تم فتح قائمة التصحيح بنجاح.</p><a href='" + tunnelUrl + "'>الذهاب للرابط يدوياً</a>");
+        return;
+    }
+
+    switch (status) {
+        case 2:
+            document.write("Error: Please enter the tunnel URL.");
+            break;
+        case 1:
+            window.location.href = tunnelUrl;
+            break;
+        case 0:
+            document.write("sorry the srvise is unavilbe and if you want to use the <a href='" + tunnelUrl + "'>servese</a> any way we are not resposble if you contenued any way");
+            break;
+    }
+}, 2000);
+</script>
+</head>
+<body>
+</body>
+</html>
