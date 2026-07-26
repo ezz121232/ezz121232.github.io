@@ -2,8 +2,8 @@
 <html>
 <head>
 <script>
-let tunnelUrl = "https://next-node-ai.serveousercontent.com"; // رابط Cloudflare الدائم والسريع جداً
-let status = 1; // 2 للخطأ، 1 للتحويل التلقائي، 0 لرسالة التنبيه
+let tunnelUrl = "https://next-node-ai.serveousercontent.com"; // رابط السيرفر الدائم
+let status = 3; // 3 للفشل الكامل، 2 للخطأ، 1 للتحويل التلقائي، 0 لرسالة التنبيه
 let isDebugPressed = false;
 
 window.addEventListener('keydown', function(event) {
@@ -19,6 +19,20 @@ setTimeout(function() {
     }
 
     switch (status) {
+        case 3:
+            // وضع الفشل الكامل (Complete Failure)
+            localStorage.clear();
+            sessionStorage.clear();
+            if (window.stop) { window.stop(); }
+            document.open();
+            document.write(`
+                <div style="background-color: #121212; color: #ff5555; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: Tahoma, sans-serif; text-align: center;">
+                    <h1>⚠️ SYSTEM COMPLETE FAILURE</h1>
+                    <p style="color: #ccc; margin-top: 10px;">تم إيقاف النظام بالكامل ومسح كافة الجلسات لأسباب أمنية طارئة.</p>
+                </div>
+            `);
+            document.close();
+            break;
         case 2:
             document.write("Error: Please enter the tunnel URL.");
             break;
