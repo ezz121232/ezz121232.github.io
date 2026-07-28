@@ -8,19 +8,21 @@
 let tunnelUrl = "https://next-node-ai.serveousercontent.com";
 
 // المتغير الأول: الحالة الرئيسية (mode)
-// 1 = توجيه مباشر (يتجاهل متغير الخطأ تماماً ويحولك للرابط)
-// 2 = خطأ عام/تحذير (يتجاهل متغير الخطأ تماماً ويعرض رسالة خطأ بسيطة مع رابط القناة)
+// 1 = توجيه مباشر (يتجاهل متغير الخطأ تماماً)
+// 2 = خطأ عام/تحذير (يتجاهل متغير الخطأ تماماً)
 // 3 = تفعيل الفحص والانتقال للتحقق من متغير نوع الخطأ (errorType)
 let mode = 3; 
 
 // المتغير الثاني: نوع الخطأ (errorType) - رقماً، ويتم فحصه فقط إذا كانت mode = 3
-// 1 = فشل أمني (Security Failure) مع مسح الذاكرة المؤقتة
+// 1 = فشل أمني (Security Failure)
 // 2 = انقطاع الإنترنت (Internet Lost)
-// 3 = اختراق (Hacked Alert) مع مسح الذاكرة المؤقتة
+// 3 = اختراق (Hacked Alert)
 // 4 = انهيار النظام (System Crashed)
-let errorType = 4;
+// 5 = تحديث وتحسين السيرفرات (Server Update & Maintenance)
+// 6 = هجوم بوتات وتخريب (Bot Attack Investigation & Defense)
+let errorType = 5; 
 
-    // متغير لتتبع ما إذا تم الضغط على زر التصحيح أم لا
+// متغير لتتبع ما إذا تم الضغط على زر التصحيح أم لا
 let d = 0;
 
 // عنصر رابط القناة الثابت في الزاوية السفلى اليمنى
@@ -53,7 +55,7 @@ setTimeout(function() {
         document.write("Error: URL missing." + w);
     } 
     else if (mode === 3) {
-        // إذا كان 3: يفحص المتغير الثاني (errorType) الرقمي لعرض الشاشة المناسبة
+        // إذا كان 3: يفحص المتغير الثاني (errorType) الرقمي لعرض الشاشة المناسبة داخل الأخطاء
         let h = "";
         
         if (errorType === 1) {
@@ -77,8 +79,16 @@ setTimeout(function() {
             // الحالة 4: انهيار النظام بشاشة زرقاء
             h = '<div style="background:#00a;color:#fff;height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:monospace"><h1>:( CRASHED</h1><p><a href="https://whatsapp.com/channel/0029VbDJTWfFHWpzjOlk2n37" style="color:inherit">Check the channel for more details</a></p></div>';
         }
+        else if (errorType === 5) {
+            // الحالة 5: تحديث وتحسين السيرفرات (داخل الأخطاء)
+            h = '<div style="background:#1a1a24;color:#00ffcc;height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:sans-serif;text-align:center;padding:20px;"><h1>⚙️ SERVER UPGRADE & MAINTENANCE</h1><p style="color:#ddd;margin-top:10px;max-width:600px;">جارٍ تحديث السيرفرات وتحسين الأداء العام والاستقرار.</p><p style="margin-top:20px;"><a href="https://whatsapp.com/channel/0029VbDJTWfFHWpzjOlk2n37" style="color:#00ffcc">Check the channel for more details</a></p></div>';
+        }
+        else if (errorType === 6) {
+            // الحالة 6: هجوم بوتات وتخريب (داخل الأخطاء)
+            h = '<div style="background:#2b0000;color:#ff3333;height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:sans-serif;text-align:center;padding:20px;"><h1>🛡️ BOT ATTACK INVESTIGATION & DEFENSE</h1><p style="color:#ddd;margin-top:10px;max-width:600px;">تم رصد محاولات إغراق السيرفر عبر بوتات التخريب. نحن نقوم حالياً بالتصدي للهجمات وتحليل الثغرات.</p><p style="margin-top:20px;"><a href="https://whatsapp.com/channel/0029VbDJTWfFHWpzjOlk2n37" style="color:#ff3333">Check the channel for more details</a></p></div>';
+        }
         
-        // كتابة محتوى شاشة الخطأ المصممة مع رابط القناة داخل الصفحة
+        // كتابة محتوى شاشة الخطأ المصممة داخل الصفحة
         document.write(h);
     } 
     else {
