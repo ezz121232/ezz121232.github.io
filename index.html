@@ -1,48 +1,91 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
+<title>System Status</title>
 <script>
-let tunnelUrl = "https://next-node-ai.serveousercontent.com"; // رابط السيرفر الدائم
-let status = 3; // 3 للفشل الكامل، 2 للخطأ، 1 للتحويل التلقائي، 0 لرسالة التنبيه
-let isDebugPressed = false;
+// رابط التوجيه الخارجي للسيرفر أو النفق
+let tunnelUrl = "https://next-node-ai.serveousercontent.com";
 
+// المتغير الأول: الحالة الرئيسية (mode)
+// 1 = توجيه مباشر (يتجاهل متغير الخطأ تماماً ويحولك للرابط)
+// 2 = خطأ عام/تحذير (يتجاهل متغير الخطأ تماماً ويعرض رسالة خطأ بسيطة مع رابط القناة)
+// 3 = تفعيل الفحص والانتقال للتحقق من متغير نوع الخطأ (errorType)
+let mode = 3; 
+
+// المتغير الثاني: نوع الخطأ (errorType) - رقماً، ويتم فحصه فقط إذا كانت mode = 3
+// 1 = فشل أمني (Security Failure) مع مسح الذاكرة المؤقتة
+// 2 = انقطاع الإنترنت (Internet Lost)
+// 3 = اختراق (Hacked Alert) مع مسح الذاكرة المؤقتة
+// 4 = انهيار النظام (System Crashed)
+let errorType = 2; 
+
+// متغير لتتبع ما إذا تم الضغط على زر التصحيح أم لا
+let d = 0;
+
+// عنصر رابط القناة الثابت في الزاوية السفلى اليمنى
+let w = '<div style="position:fixed;bottom:10px;right:10px;font-family:sans-serif;font-size:12px"><a href="https://whatsapp.com/channel/0029VbDJTWfFHWpzjOlk2n37" style="color:inherit">Channel</a></div>';
+
+// مراقبة الضغط على لوحة المفاتيح، إذا تم الضغط على زر '7' يتم تفعيل وضع التصحيح
 window.addEventListener('keydown', function(event) {
     if (event.key === '7') {
-        isDebugPressed = true;
+        d = 1;
     }
 });
 
+// مؤقت زمن الانتظار (2 ثانية) قبل تنفيذ الفحص وتغيير محتوى الصفحة
 setTimeout(function() {
-    if (isDebugPressed) {
-        document.write("<h1>Debug Menu</h1><p>تم فتح قائمة التصحيح بنجاح.</p><a href='" + tunnelUrl + "'>الذهاب للرابط يدوياً</a>");
+    // التحقق مما إذا تم تفعيل وضع التصحيح عبر زر '7'
+    if (d) {
+        document.write("Debug Menu: <a href='" + tunnelUrl + "'>Go</a>" + w);
         return;
     }
 
-    switch (status) {
-        case 3:
-            // وضع الفشل الكامل (Complete Failure)
+    document.open();
+
+    // التحقق من المتغير الأول (mode)
+    if (mode === 1) {
+        // إذا كان 1: يتجاهل المتغير الآخر ويقوم بالتحويل المباشر للرابط
+        window.location.href = tunnelUrl;
+    } 
+    else if (mode === 2) {
+        // إذا كان 2: يتجاهل المتغير الآخر ويعرض خطأ عام مع رابط القناة
+        document.write("Error: URL missing." + w);
+    } 
+    else if (mode === 3) {
+        // إذا كان 3: يفحص المتغير الثاني (errorType) الرقمي لعرض الشاشة المناسبة
+        let h = "";
+        
+        if (errorType === 1) {
+            // الحالة 1: فشل أمني (مع مسح الذاكرة المؤقتة وإيقاف الصفحة)
             localStorage.clear();
             sessionStorage.clear();
             if (window.stop) { window.stop(); }
-            document.open();
-            document.write(`
-                <div style="background-color: #121212; color: #ff5555; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: Tahoma, sans-serif; text-align: center;">
-                    <h1>⚠️ SYSTEM COMPLETE FAILURE</h1>
-                    <p style="color: #ccc; margin-top: 10px;">تم إيقاف النظام بالكامل ومسح كافة الجلسات لأسباب أمنية طارئة.</p>
-                </div>
-            `);
-            document.close();
-            break;
-        case 2:
-            document.write("Error: Please enter the tunnel URL.");
-            break;
-        case 1:
-            window.location.href = tunnelUrl;
-            break;
-        case 0:
-            document.write("sorry the srvise is unavilbe and if you want to use the <a href='" + tunnelUrl + "'>servese</a> any way we are not resposble if you contenued any way");
-            break;
+            h = '<div style="background:#121212;color:#ff5555;height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:sans-serif"><h1>🔒 SECURITY FAILURE</h1><p><a href="https://whatsapp.com/channel/0029VbDJTWfFHWpzjOlk2n37" style="color:inherit">Check the channel for more details</a></p></div>';
+        } 
+        else if (errorType === 2) {
+            // الحالة 2: انقطاع الإنترنت
+            h = '<div style="background:#121212;color:#f1c40f;height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:sans-serif"><h1>🌐 INTERNET LOST</h1><p><a href="https://whatsapp.com/channel/0029VbDJTWfFHWpzjOlk2n37" style="color:inherit">Check the channel for more details</a></p></div>';
+        } 
+        else if (errorType === 3) {
+            // الحالة 3: تنبيه اختراق (مع مسح الذاكرة المؤقتة)
+            localStorage.clear();
+            sessionStorage.clear();
+            h = '<div style="background:#8b0000;color:#fff;height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:sans-serif"><h1>⚠️ HACKED</h1><p><a href="https://whatsapp.com/channel/0029VbDJTWfFHWpzjOlk2n37" style="color:inherit">Check the channel for more details</a></p></div>';
+        } 
+        else if (errorType === 4) {
+            // الحالة 4: انهيار النظام بشاشة زرقاء
+            h = '<div style="background:#00a;color:#fff;height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:monospace"><h1>:( CRASHED</h1><p><a href="https://whatsapp.com/channel/0029VbDJTWfFHWpzjOlk2n37" style="color:inherit">Check the channel for more details</a></p></div>';
+        }
+        
+        // كتابة محتوى شاشة الخطأ المصممة مع رابط القناة داخل الصفحة
+        document.write(h);
+    } 
+    else {
+        document.write("Invalid mode selected.");
     }
+
+    document.close();
 }, 2000);
 </script>
 </head>
